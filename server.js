@@ -59,16 +59,20 @@ app.post("/charge-customer", async (req, res) => {
     const { price } = req.body;
 
     // Now end the trial subscription, replace this subscriptionId, which will be fetch from the database
-    const trial_subscription = await stripe.subscriptions.update(
-      "sub_1MPYhhLmMXaRzghn0986ejeS",
+    await stripe.subscriptions.update(
+      "sub_1MPqQILmMXaRzghnA3V5fhy4",
       { trial_end: 'now' }
     );
+
+    // Also remove the subscription from the customer
+    await stripe.subscriptions.del("sub_1MPqQILmMXaRzghnA3V5fhy4")
 
     // Fetch the customerId from the login context
 
     const actual_subscription = await stripe.subscriptions.create({
-      customer: "cus_N9sSTcew7kn3V0",
+      customer: "cus_NAAlzXYRjh34Uu",
       items: [{ price }],
+      payment_behavior: 'default_incomplete',
       payment_settings: {
         payment_method_options: {
           card: {
